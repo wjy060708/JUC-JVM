@@ -1,0 +1,58 @@
+package com.atguigu.juc;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+/*
+ * 涓�銆乮++ 鐨勫師瀛愭�ч棶棰橈細i++ 鐨勬搷浣滃疄闄呬笂鍒嗕负涓変釜姝ラ鈥滆-鏀�-鍐欌��
+ * 		  int i = 10;
+ * 		  i = i++; //10
+ * 
+ * 		  int temp = i;
+ * 		  i = i + 1;
+ * 		  i = temp;
+ * 
+ * 浜屻�佸師瀛愬彉閲忥細鍦� java.util.concurrent.atomic 鍖呬笅鎻愪緵浜嗕竴浜涘師瀛愬彉閲忋��
+ * 		1. volatile 淇濊瘉鍐呭瓨鍙鎬�
+ * 		2. CAS锛圕ompare-And-Swap锛� 绠楁硶淇濊瘉鏁版嵁鍙橀噺鐨勫師瀛愭��
+ * 			CAS 绠楁硶鏄‖浠跺浜庡苟鍙戞搷浣滅殑鏀寔
+ * 			CAS 鍖呭惈浜嗕笁涓搷浣滄暟锛�
+ * 			鈶犲唴瀛樺��  V
+ * 			鈶￠浼板��  A
+ * 			鈶㈡洿鏂板��  B
+ * 			褰撲笖浠呭綋 V == A 鏃讹紝 V = B; 鍚﹀垯锛屼笉浼氭墽琛屼换浣曟搷浣溿��
+ */
+public class TestAtomicDemo {
+
+	public static void main(String[] args) {
+		AtomicDemo ad = new AtomicDemo();
+		
+		for (int i = 0; i < 10; i++) {
+			new Thread(ad).start();
+		}
+	}
+	
+}
+
+class AtomicDemo implements Runnable{
+	
+//	private volatile int serialNumber = 0;
+	
+	private AtomicInteger serialNumber = new AtomicInteger(0);
+
+	@Override
+	public void run() {
+		
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+		}
+		
+		System.out.println(getSerialNumber());
+	}
+	
+	public int getSerialNumber(){
+		return serialNumber.getAndIncrement();
+	}
+	
+	
+}
